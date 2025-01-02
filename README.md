@@ -25,7 +25,7 @@ The NFT Proxy service:
 ## 3. Critical Issues
 
 ### 3.1 SQL Injection Risk
-- **Location**: `/cli/reload_hashlist.go`
+- **Location**: [`/cli/reload_hashlist.go`](https://github.com/alphabatem/nft-proxy/blob/main/cli/reload_hashlist.go)
 - **Issue**: Direct concatenation of user input in the SQL `WHERE` clause.
 - **Why It’s Critical**: An attacker could craft malicious inputs, potentially modifying the SQL query to access or destroy data.
 
@@ -54,7 +54,7 @@ err = db.Db().
 ---
 
 ### 3.2 Unchecked Errors for Critical Function
-- **Location**: `/service/solana.go`
+- **Location**: [`/service/solana.go`](https://github.com/alphabatem/nft-proxy/blob/main/service/solana.go)
 - **Issue**: The `FindTokenMetadataAddress` function returns an error that is currently being discarded.
 
 **Code Before**:
@@ -82,7 +82,7 @@ if err != nil {
 ---
 
 ### 3.3 No Graceful Shutdown Handling
-- **Location**: `/runtime/main.go`
+- **Location**: [`/runtime/main.go`](https://github.com/alphabatem/nft-proxy/blob/main/runtime/main.go)
 - **Issue**: The application does not handle `SIGINT` or `SIGTERM` signals, leading to abrupt exits.
 
 **Code Before**:
@@ -113,7 +113,7 @@ log.Println("Received shutdown signal, shutting down gracefully...")
 ## 4. Non-Critical Bugs
 
 ### 4.1 Hardcoded File Paths
-- **Location**: `/service/image.go`
+- **Location**: [`/service/image.go`](https://github.com/alphabatem/nft-proxy/blob/main/service/image.go)
 - **Issue**: Using hardcoded paths `./cache/solana/`, `./docs/failed_image.jpg` reduces flexibility. If you deploy to a different environment, you must edit the code instead of just changing configuration.
 
 **Code Before**:
@@ -155,7 +155,7 @@ if err != nil {
 **Benefits**: The code becomes more portable and easier to configure in different deployment environments without modifying the source code.
 
 ### 4.2 `.env` File Handling
-- **Location**: `/runtime/main.go`
+- **Location**: [`/runtime/main.go`](https://github.com/alphabatem/nft-proxy/blob/main/runtime/main.go)
 - **Issue**: Missing `.env` file triggers a `log.Fatal(...)` which may be too aggressive if environment variables are set elsewhere.
 
 **Code Before**:
@@ -175,7 +175,7 @@ if err := godotenv.Load(); err != nil {
 ---
 
 ### 4.3 Channel Closure in [collectionLoader]
-- **Location**: `/cli/load_collection_images.go`
+- **Location**: [`/cli/load_collection_images.go`](https://github.com/alphabatem/nft-proxy/blob/main/cli/load_collection_images.go)
 - **Issue**: `metaDataIn`, `fileIn`, and `mediaIn` channels are created but never closed. This can lead to worker goroutines blocking forever once they finish consuming.
 
 **Code Before**:
@@ -230,6 +230,7 @@ log.Printf("[INFO] %s", media.ImageUri)
 ## 5. Optimize Code
 
 ### 5.1 Testing
+- **Location**: [`/service/solana_test.go`](https://github.com/alphabatem/nft-proxy/blob/main/service/solana_test.go)
 - **Reason**: No clear unit or integration tests for critical services.
 
 **Improved Code**:
@@ -251,6 +252,7 @@ func TestSolanaService_TokenData(t *testing.T) {
 ---
 
 ### 5.2 Service Decoupling
+- **Location**: [`/service/image.go`](https://github.com/alphabatem/nft-proxy/blob/main/service/image.go)
 - **Reason**: `ImageService` and `SolanaService` are tightly coupled, making it harder to test and scale.
 
 **Code Before**:
